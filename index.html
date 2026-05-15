@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Mermaid Picks 🧜‍♀️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script>
+  const SHEET_CSV_URL   = "https://docs.google.com/spreadsheets/d/1CwYosETgiKhOMgaq8yP_X8xjD8ZhJrHdcIWwJmnZN3k/export?format=csv&gid=0";
+  const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSejhtZbBcX3HyaK1fVE0hE4LrudMFiJ1rYCE6hfBcg6Vjg7pg/viewform";
+</script>
+
+<style>
+  :root{
+    --teal:#0d9488;--deep:#134e4a;--sea:#0f766e;
+    --foam:#f0fdfa;--sand:#fdf6ee;--text:#1c3532;
+    --muted:#6b9490;--wave:#99f6e4;--coral:#f43f5e;
+    --book:#8b5cf6;--movie:#f97316;--done:#10b981;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{background:#fdf6ee!important;}
+  body{font-family:'Nunito',sans-serif;background:#fdf6ee!important;color:#1c3532!important;min-height:100vh;color-scheme:light;-webkit-text-fill-color:initial;}
+  .header{background:linear-gradient(145deg,#134e4a 0%,#0d9488 60%,#2dd4bf 100%);padding:22px 20px 36px;position:relative;overflow:hidden;}
+  .bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.07);animation:rise linear infinite;}
+  .b1{width:18px;height:18px;left:8%;bottom:-20px;animation-duration:6s;}
+  .b2{width:10px;height:10px;left:22%;bottom:-20px;animation-duration:8s;animation-delay:1.5s;}
+  .b3{width:24px;height:24px;left:55%;bottom:-20px;animation-duration:7s;animation-delay:.8s;}
+  .b4{width:14px;height:14px;left:75%;bottom:-20px;animation-duration:9s;animation-delay:2s;}
+  .b5{width:8px;height:8px;left:90%;bottom:-20px;animation-duration:5s;animation-delay:3s;}
+  @keyframes rise{to{transform:translateY(-110vh);opacity:0;}}
+  .header::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:32px;background:#fdf6ee;border-radius:60% 60% 0 0/100% 100% 0 0;}
+  .header-inner{max-width:560px;margin:0 auto;position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;}
+  .header h1{font-family:'Playfair Display',serif;font-size:2rem;color:#fff!important;letter-spacing:-.5px;}
+  .header p{color:#99f6e4!important;font-size:.88rem;margin-top:4px;}
+  .refresh-btn{background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:38px;height:38px;color:#fff!important;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:background .2s;-webkit-text-fill-color:#fff!important;}
+  .refresh-btn:hover{background:rgba(255,255,255,0.25);}
+  .refresh-btn.spinning{animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #login-screen{max-width:420px;margin:0 auto;padding:24px 16px;display:none;}
+  .login-card{background:#fff!important;border-radius:22px;padding:28px 22px;box-shadow:0 6px 32px rgba(13,148,136,.13);}
+  .login-card h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:#134e4a!important;margin-bottom:6px;}
+  .login-card>p{color:#6b9490!important;font-size:.88rem;margin-bottom:20px;}
+  .input-label{font-size:.84rem;font-weight:700;color:#134e4a!important;margin-bottom:6px;display:block;}
+  .input-field{width:100%;padding:13px 16px;border:2px solid #99f6e4;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;color:#1c3532!important;background:#f0fdfa!important;outline:none;transition:border-color .2s;margin-bottom:14px;-webkit-text-fill-color:#1c3532!important;}
+  .input-field:focus{border-color:#0d9488;}
+  .btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff!important;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;-webkit-text-fill-color:#fff!important;}
+  .btn-primary:active{opacity:.9;}
+  .login-note{margin-top:12px;font-size:.8rem;color:#6b9490!important;text-align:center;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 0;max-width:560px;margin:0 auto;}
+  .topbar-name{font-size:.82rem;color:#6b9490!important;font-weight:600;}
+  .logout-btn{background:none;border:none;color:#6b9490!important;font-size:.82rem;cursor:pointer;font-family:'Nunito',sans-serif;text-decoration:underline;}
+  #loading-msg{text-align:center;padding:40px 20px;color:#6b9490!important;display:none;}
+  .spinner{width:32px;height:32px;border:3px solid #99f6e4;border-top-color:#0d9488;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+  #app{display:none;max-width:560px;margin:0 auto;padding:14px 16px 110px;}
+  .greeting{margin-bottom:16px;}
+  .greeting .name{font-family:'Playfair Display',serif;font-size:1.2rem;color:#134e4a!important;}
+  .greeting .sub{display:block;font-size:.83rem;color:#6b9490!important;margin-top:3px;}
+  .section-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#134e4a!important;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .section-title .line{flex:1;height:1px;background:linear-gradient(90deg,#c7f7ef,transparent);}
+  .top-picks-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin-bottom:22px;scrollbar-width:none;}
+  .top-picks-scroll::-webkit-scrollbar{display:none;}
+  .top-card{flex-shrink:0;width:145px;background:#fff!important;border-radius:16px;padding:14px 12px 12px;box-shadow:0 2px 14px rgba(13,148,136,.10);position:relative;}
+  .top-rank{position:absolute;top:-8px;left:12px;font-size:1.1rem;}
+  .top-card-title{font-family:'Playfair Display',serif;font-size:.92rem;color:#134e4a!important;line-height:1.25;margin-top:8px;margin-bottom:3px;}
+  .top-card-meta{font-size:.73rem;color:#6b9490!important;}
+  .top-card-likes{margin-top:7px;font-size:.78rem;font-weight:700;color:#f43f5e!important;}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;}
+  .dot-book{background:#8b5cf6;}.dot-movie{background:#f97316;}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:8px 15px;border-radius:999px;border:2px solid #99f6e4;background:#fff!important;font-family:'Nunito',sans-serif;font-size:.83rem;font-weight:700;color:#6b9490!important;cursor:pointer;white-space:nowrap;transition:all .15s;}
+  .tab.active{background:#0d9488!important;border-color:#0d9488;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+  .picks-list{display:flex;flex-direction:column;gap:12px;}
+  .pick-card{background:#fff!important;border-radius:18px;padding:15px 15px 12px;box-shadow:0 2px 12px rgba(13,148,136,.07);animation:fadeUp .25s ease both;}
+  .pick-card.done-card{opacity:.62;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .card-title-wrap{flex:1;}
+  .card-title{font-family:'Playfair Display',serif;font-size:1.08rem;color:#134e4a!important;line-height:1.22;}
+  .card-title.strike{text-decoration:line-through;color:#6b9490!important;}
+  .card-meta{font-size:.78rem;color:#6b9490!important;margin-top:3px;margin-bottom:7px;}
+  .card-badge{font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;}
+  .badge-book{background:#ede9fe;color:#8b5cf6!important;}
+  .badge-movie{background:#fff3e8;color:#f97316!important;}
+  .badge-genre{background:#f0fdfa;color:#0d9488!important;border:1px solid #99f6e4;}
+  .card-note{font-size:.85rem;color:#1c3532!important;line-height:1.5;margin-bottom:10px;padding:9px 12px;background:#f0fdfa!important;border-radius:10px;font-style:italic;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .card-who{font-size:.76rem;color:#6b9490!important;}
+  .card-who strong{color:#0d9488!important;}
+  .card-actions{display:flex;gap:6px;align-items:center;}
+  .like-btn{display:flex;align-items:center;gap:4px;padding:7px 12px;border-radius:999px;border:2px solid #fecdd3;background:#fff!important;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:#f43f5e!important;cursor:pointer;transition:all .15s;}
+  .like-btn.liked{background:#f43f5e!important;border-color:#f43f5e;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+  .like-btn:active{transform:scale(.94);}
+  .done-btn{display:flex;align-items:center;gap:4px;padding:7px 12px;border-radius:999px;border:2px solid #a7f3d0;background:#fff!important;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:#10b981!important;cursor:pointer;transition:all .15s;}
+  .done-btn.is-done{background:#10b981!important;border-color:#10b981;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+  .done-btn:active{transform:scale(.94);}
+  .done-count{font-size:.72rem;color:#10b981!important;font-weight:700;}
+  .empty{text-align:center;padding:40px 20px;color:#6b9490!important;}
+  .empty .emoji{font-size:2.6rem;display:block;margin-bottom:10px;}
+  .empty p{font-size:.93rem;}
+  .fab{position:fixed;bottom:28px;right:20px;display:none;align-items:center;gap:0;height:56px;border-radius:999px;background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff!important;border:none;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;box-shadow:0 6px 22px rgba(13,148,136,.45);z-index:100;-webkit-text-fill-color:#fff!important;text-decoration:none;padding-right:20px;}
+  .fab-icon{width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+  .fab:active{opacity:.9;transform:scale(.97);}
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(19,78,74,.6);z-index:200;align-items:flex-end;justify-content:center;}
+  .modal-backdrop.open{display:flex;animation:fadeIn .2s;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff!important;border-radius:24px 24px 0 0;padding:26px 22px 44px;width:100%;max-width:560px;animation:slideUp .25s ease;max-height:80vh;overflow-y:auto;}
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .modal h2{font-family:'Playfair Display',serif;font-size:1.2rem;color:#134e4a!important;}
+  .modal-close{background:#f0fdfa!important;border:none;border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;color:#6b9490!important;display:flex;align-items:center;justify-content:center;}
+  .like-list{display:flex;flex-direction:column;gap:8px;}
+  .like-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f0fdfa!important;border-radius:12px;font-size:.9rem;color:#1c3532!important;font-weight:600;}
+  .footer-note{font-size:.75rem;color:#6b9490!important;text-align:center;margin-top:18px;padding:0 8px;line-height:1.6;}
+  .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#134e4a;color:#fff!important;padding:12px 22px;border-radius:999px;font-size:.88rem;font-weight:700;opacity:0;transition:opacity .3s,transform .3s;z-index:300;white-space:nowrap;pointer-events:none;-webkit-text-fill-color:#fff!important;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="b1 bubble"></div><div class="b2 bubble"></div>
+  <div class="b3 bubble"></div><div class="b4 bubble"></div><div class="b5 bubble"></div>
+  <div class="header-inner">
+    <div><h1>🧜‍♀️ Mermaid Picks</h1><p>Books &amp; movies from your swim group</p></div>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadPicks()" title="Refresh picks">↻</button>
+  </div>
+</div>
+<div id="login-screen">
+  <div class="login-card">
+    <h2>Dive in! 🌊</h2>
+    <p>Enter your first name so the group knows who's recommending what.</p>
+    <label class="input-label" for="name-input">Your first name</label>
+    <input class="input-field" id="name-input" type="text" placeholder="e.g. Sarah" autocomplete="off" maxlength="30">
+    <button class="btn-primary" onclick="login()">Let's go →</button>
+    <p class="login-note">No password needed — anyone with the link can join.</p>
+  </div>
+</div>
+<div id="loading-msg"><div class="spinner"></div><p>Loading picks…</p></div>
+<div style="display:none" id="app-wrapper">
+  <div class="topbar">
+    <span class="topbar-name" id="topbar-name"></span>
+    <button class="logout-btn" onclick="logout()">Change name</button>
+  </div>
+  <div id="app">
+    <div class="greeting">
+      <span class="name" id="greeting-name"></span>
+      <span class="sub">See what the group is reading &amp; watching 📚🎬</span>
+    </div>
+    <div id="top-section" style="display:none">
+      <div class="section-title">🏆 Top Picks <span class="line"></span></div>
+      <div class="top-picks-scroll" id="top-picks-scroll"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="setFilter('all',this)">All picks</button>
+      <button class="tab" onclick="setFilter('book',this)">📚 Books</button>
+      <button class="tab" onclick="setFilter('movie',this)">🎬 Movies</button>
+      <button class="tab" onclick="setFilter('done',this)">✅ Read/Watched</button>
+      <button class="tab" onclick="setFilter('mine',this)">My picks</button>
+    </div>
+    <div class="picks-list" id="picks-list"></div>
+    <p class="footer-note">❤️ Likes and ✅ Read/Watched are saved on your device.<br>Tap ↻ at the top to check for new picks.</p>
+  </div>
+</div>
+<a class="fab" id="fab" href="https://docs.google.com/forms/d/e/1FAIpQLSejhtZbBcX3HyaK1fVE0hE4LrudMFiJ1rYCE6hfBcg6Vjg7pg/viewform" target="_blank" rel="noopener">
+  <span class="fab-icon">＋</span>Add a pick
+</a>
+<div class="modal-backdrop" id="likes-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">❤️ Liked by</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  let currentUser=null,currentFilter='all',allPicks=[];
+  function getLikes(){try{return JSON.parse(localStorage.getItem('mp_likes')||'{}');}catch(e){return{};}}
+  function getDone(){try{return JSON.parse(localStorage.getItem('mp_done')||'{}');}catch(e){return{};}}
+  function saveLikes(o){try{localStorage.setItem('mp_likes',JSON.stringify(o));}catch(e){}}
+  function saveDone(o){try{localStorage.setItem('mp_done',JSON.stringify(o));}catch(e){}}
+  function getLikeCount(id){const a=getLikes();let n=0;Object.values(a).forEach(u=>{if(u[id])n++;});return n;}
+  function getLikedBy(id){const a=getLikes();return Object.entries(a).filter(([,u])=>u[id]).map(([n])=>n);}
+  function iLiked(id){const l=getLikes();return !!(l[currentUser]&&l[currentUser][id]);}
+  function iDone(id){const d=getDone();return !!(d[currentUser]&&d[currentUser][id]);}
+  function toggleLike(id){const l=getLikes();if(!l[currentUser])l[currentUser]={};l[currentUser][id]=!l[currentUser][id];if(!l[currentUser][id])delete l[currentUser][id];saveLikes(l);renderAll();}
+  function toggleDone(id,type){const d=getDone();if(!d[currentUser])d[currentUser]={};const was=!!d[currentUser][id];d[currentUser][id]=!was;if(!d[currentUser][id])delete d[currentUser][id];saveDone(d);if(!was)showToast(type==='book'?'Marked as read! 📖':'Marked as watched! 🎬');renderAll();}
+  window.onload=function(){try{const s=localStorage.getItem('mermaidpicks_user');if(s){currentUser=s;showApp();return;}}catch(e){}document.getElementById('login-screen').style.display='block';};
+  function login(){const name=document.getElementById('name-input').value.trim();if(!name){showToast('Please enter your name!');return;}currentUser=name;try{localStorage.setItem('mermaidpicks_user',name);}catch(e){}showApp();}
+  function logout(){try{localStorage.removeItem('mermaidpicks_user');}catch(e){}currentUser=null;document.getElementById('login-screen').style.display='block';document.getElementById('app-wrapper').style.display='none';document.getElementById('fab').style.display='none';document.getElementById('name-input').value='';}
+  function showApp(){document.getElementById('login-screen').style.display='none';document.getElementById('app-wrapper').style.display='block';document.getElementById('fab').style.display='flex';document.getElementById('greeting-name').textContent='Hi, '+currentUser+'! 👋';document.getElementById('topbar-name').textContent='👋 '+currentUser;loadPicks();}
+  async function loadPicks(){const btn=document.getElementById('refresh-btn');btn.classList.add('spinning');document.getElementById('loading-msg').style.display='block';document.getElementById('app').style.display='none';try{const resp=await fetch(SHEET_CSV_URL+'&t='+Date.now());if(!resp.ok)throw new Error('fetch failed');const csv=await resp.text();allPicks=parseCSV(csv);document.getElementById('loading-msg').style.display='none';document.getElementById('app').style.display='block';renderAll();}catch(e){document.getElementById('loading-msg').innerHTML='<p style="color:#f43f5e;font-size:.9rem">Could not load picks.<br>Check your internet and try again.<br><br><button onclick="loadPicks()" style="margin-top:10px;padding:10px 20px;background:#0d9488;color:white;border:none;border-radius:10px;font-size:.9rem;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700">Try again</button></p>';}finally{btn.classList.remove('spinning');}}
+  function parseCSV(csv){const lines=csv.trim().split('\n');if(lines.length<2)return[];return lines.slice(1).map((line,i)=>{const c=splitCSVLine(line);return{id:'row_'+i,ts:c[0]||'',who:(c[1]||'').trim(),type:(c[2]||'').trim().toLowerCase()==='movie'?'movie':'book',title:(c[3]||'').trim(),author:(c[4]||'').trim(),note:(c[5]||'').trim(),genre:(c[6]||'').trim()};}).filter(p=>p.title);}
+  function splitCSVLine(line){const result=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(ch===','&&!inQ){result.push(cur);cur='';}else cur+=ch;}result.push(cur);return result;}
+  function renderAll(){renderTopPicks();renderPicks();}
+  function renderTopPicks(){const ranked=[...allPicks].map(p=>({...p,likeCount:getLikeCount(p.id)})).filter(p=>p.likeCount>0).sort((a,b)=>b.likeCount-a.likeCount).slice(0,5);const el=document.getElementById('top-picks-scroll');const sec=document.getElementById('top-section');if(!ranked.length){sec.style.display='none';return;}sec.style.display='block';const medals=['🥇','🥈','🥉','⭐','⭐'];el.innerHTML=ranked.map((p,i)=>`<div class="top-card"><span class="top-rank">${medals[i]}</span><div style="margin-top:6px"><span class="dot dot-${p.type}"></span><span style="font-size:.68rem;color:#6b9490;font-weight:700;text-transform:uppercase">${p.type}</span></div><div class="top-card-title">${esc(p.title)}</div>${p.author?`<div class="top-card-meta">${esc(p.author)}</div>`:''}<div class="top-card-likes">❤️ ${p.likeCount} like${p.likeCount>1?'s':''}</div></div>`).join('');}
+  function renderPicks(){const list=document.getElementById('picks-list');let picks=[...allPicks].reverse();if(currentFilter==='book')picks=picks.filter(p=>p.type==='book');if(currentFilter==='movie')picks=picks.filter(p=>p.type==='movie');if(currentFilter==='mine')picks=picks.filter(p=>p.who===currentUser);if(currentFilter==='done')picks=picks.filter(p=>iDone(p.id));if(!picks.length){const msgs={mine:"You haven't added any picks yet — tap '+ Add a pick'!",done:"You haven't marked anything as read/watched yet.",book:"No book picks yet!",movie:"No movie picks yet!",all:"No picks yet — be the first!"};list.innerHTML=`<div class="empty"><span class="emoji">${currentFilter==='done'?'✅':'🌊'}</span><p>${msgs[currentFilter]||msgs.all}</p></div>`;return;}list.innerHTML=picks.map((p,i)=>{const liked=iLiked(p.id),done=iDone(p.id);const likeCount=getLikeCount(p.id);const isOwn=p.who===currentUser;const doneWord=p.type==='book'?'Read it':'Watched it';return`<div class="pick-card${done?' done-card':''}" style="animation-delay:${i*.04}s"><div class="card-top"><div class="card-title-wrap"><div class="card-title${done?' strike':''}">${esc(p.title)}</div>${p.author?`<div class="card-meta">${esc(p.author)}</div>`:'<div style="height:4px"></div>'}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span class="card-badge badge-${p.type}">${p.type==='book'?'📚 Book':'🎬 Movie'}</span>${p.genre?`<span class="card-badge badge-genre">${esc(p.genre)}</span>`:''}</div></div>${p.note?`<div class="card-note">"${esc(p.note)}"</div>`:''}<div class="card-footer"><div class="card-who">by <strong>${esc(p.who)}</strong>${likeCount>0?`<span style="cursor:pointer" onclick="showLikedBy('${p.id}')"> · <span class="done-count">❤️ ${likeCount}</span></span>`:''}</div><div class="card-actions"><button class="done-btn${done?' is-done':''}" onclick="toggleDone('${p.id}','${p.type}')">${done?'✅ Done':'☑️ '+doneWord}</button><button class="like-btn${liked?' liked':''}" onclick="toggleLike('${p.id}')">${liked?'❤️':'🤍'} ${likeCount>0?likeCount:'Like'}</button></div></div></div>`;}).join('');}
+  function showLikedBy(id){const names=getLikedBy(id);document.getElementById('modal-body').innerHTML=names.length?`<div class="like-list">${names.map(n=>`<div class="like-row">🧜‍♀️ ${esc(n)}</div>`).join('')}</div>`:'<p style="color:#6b9490;font-size:.9rem">No likes recorded on this device yet.</p>';document.getElementById('likes-modal').classList.add('open');}
+  function closeModal(){document.getElementById('likes-modal').classList.remove('open');}
+  document.getElementById('likes-modal').addEventListener('click',e=>{if(e.target===document.getElementById('likes-modal'))closeModal();});
+  function setFilter(f,el){currentFilter=f;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderPicks();}
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+</script>
+</body>
+</html>
