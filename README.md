@@ -1,2 +1,495 @@
 # Mermaid-picks
 Book and Movie Recommendations
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Mermaid Picks 🧜‍♀️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     SETUP: Replace the values below with your Firebase config.
+     See the SETUP GUIDE in the README or instructions provided.
+     ============================================================ -->
+
+<script>
+  const FIREBASE_CONFIG = {
+    apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+    authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+    projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
+    storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+    messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+    appId:             "REPLACE_WITH_YOUR_APP_ID"
+  };
+</script>
+
+<style>
+  :root {
+    --teal:#0d9488; --deep:#134e4a; --sea:#0f766e;
+    --foam:#f0fdfa; --sand:#fdf6ee; --text:#1c3532;
+    --muted:#6b9490; --wave:#99f6e4; --coral:#f43f5e;
+    --book:#8b5cf6; --movie:#f97316; --done:#10b981;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{background:#fdf6ee!important;}
+  body{font-family:'Nunito',sans-serif;background:#fdf6ee!important;color:#1c3532!important;min-height:100vh;color-scheme:light;-webkit-text-fill-color:initial;}
+
+  /* HEADER */
+  .header{background:linear-gradient(145deg,#134e4a 0%,#0d9488 60%,#2dd4bf 100%);padding:22px 20px 36px;position:relative;overflow:hidden;}
+  .bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.07);animation:rise linear infinite;}
+  .b1{width:18px;height:18px;left:8%;bottom:-20px;animation-duration:6s;}
+  .b2{width:10px;height:10px;left:22%;bottom:-20px;animation-duration:8s;animation-delay:1.5s;}
+  .b3{width:24px;height:24px;left:55%;bottom:-20px;animation-duration:7s;animation-delay:0.8s;}
+  .b4{width:14px;height:14px;left:75%;bottom:-20px;animation-duration:9s;animation-delay:2s;}
+  .b5{width:8px;height:8px;left:90%;bottom:-20px;animation-duration:5s;animation-delay:3s;}
+  @keyframes rise{to{transform:translateY(-110vh);opacity:0;}}
+  .header::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:32px;background:#fdf6ee;border-radius:60% 60% 0 0/100% 100% 0 0;}
+  .header-inner{max-width:560px;margin:0 auto;position:relative;z-index:1;}
+  .header h1{font-family:'Playfair Display',serif;font-size:2.1rem;color:#fff!important;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px;}
+  .header p{color:#99f6e4!important;font-size:0.88rem;margin-top:5px;}
+
+  /* LOGIN */
+  #login-screen{max-width:420px;margin:0 auto;padding:28px 20px;display:none;}
+  .login-card{background:#fff!important;border-radius:22px;padding:30px 24px;box-shadow:0 6px 32px rgba(13,148,136,0.13);}
+  .login-card h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:#134e4a!important;margin-bottom:6px;}
+  .login-card>p{color:#6b9490!important;font-size:0.9rem;margin-bottom:22px;}
+  .input-label{font-size:0.84rem;font-weight:700;color:#134e4a!important;margin-bottom:6px;display:block;}
+  .input-field{width:100%;padding:13px 16px;border:2px solid #99f6e4;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;color:#1c3532!important;background:#f0fdfa!important;outline:none;transition:border-color 0.2s;margin-bottom:14px;-webkit-text-fill-color:#1c3532!important;}
+  .input-field:focus{border-color:#0d9488;}
+  textarea.input-field{resize:vertical;min-height:76px;}
+  .btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff!important;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity 0.2s,transform 0.1s;-webkit-text-fill-color:#fff!important;}
+  .btn-primary:active{transform:scale(0.98);}
+  .btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
+  .login-note{margin-top:14px;font-size:0.8rem;color:#6b9490!important;text-align:center;}
+
+  /* TOPBAR */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 0;max-width:560px;margin:0 auto;}
+  .topbar-name{font-size:0.82rem;color:#6b9490!important;font-weight:600;}
+  .logout-btn{background:none;border:none;color:#6b9490!important;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif;text-decoration:underline;}
+
+  /* LOADING */
+  #loading-screen{max-width:560px;margin:0 auto;padding:48px 20px;text-align:center;color:#6b9490!important;}
+  .spinner{width:36px;height:36px;border:4px solid #99f6e4;border-top-color:#0d9488;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* MAIN */
+  #app{display:none;max-width:560px;margin:0 auto;padding:16px 16px 110px;}
+  .greeting{margin-bottom:18px;}
+  .greeting .name{font-family:'Playfair Display',serif;font-size:1.25rem;color:#134e4a!important;}
+  .greeting .sub{display:block;font-size:0.84rem;color:#6b9490!important;margin-top:3px;}
+
+  /* TOP PICKS */
+  .section-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#134e4a!important;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .section-title .line{flex:1;height:1px;background:linear-gradient(90deg,#c7f7ef,transparent);}
+  .top-picks-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin-bottom:24px;scrollbar-width:none;}
+  .top-picks-scroll::-webkit-scrollbar{display:none;}
+  .top-card{flex-shrink:0;width:150px;background:#fff!important;border-radius:16px;padding:14px 14px 12px;box-shadow:0 2px 14px rgba(13,148,136,0.10);position:relative;}
+  .top-rank{position:absolute;top:-8px;left:12px;font-size:1.1rem;}
+  .top-card-title{font-family:'Playfair Display',serif;font-size:0.95rem;color:#134e4a!important;line-height:1.25;margin-top:8px;margin-bottom:4px;}
+  .top-card-meta{font-size:0.75rem;color:#6b9490!important;}
+  .top-card-likes{margin-top:8px;font-size:0.8rem;font-weight:700;color:#f43f5e!important;display:flex;align-items:center;gap:4px;}
+  .top-type-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;}
+  .dot-book{background:#8b5cf6;} .dot-movie{background:#f97316;}
+
+  /* TABS */
+  .tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:8px 16px;border-radius:999px;border:2px solid #99f6e4;background:#fff!important;font-family:'Nunito',sans-serif;font-size:0.84rem;font-weight:700;color:#6b9490!important;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+  .tab.active{background:#0d9488!important;border-color:#0d9488;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+
+  /* CARDS */
+  .picks-list{display:flex;flex-direction:column;gap:12px;}
+  .pick-card{background:#fff!important;border-radius:18px;padding:16px 16px 13px;box-shadow:0 2px 12px rgba(13,148,136,0.07);animation:fadeUp 0.28s ease both;}
+  .pick-card.done-card{opacity:0.65;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .card-title-wrap{flex:1;}
+  .card-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:#134e4a!important;line-height:1.22;}
+  .card-title.strikethrough{text-decoration:line-through;color:#6b9490!important;}
+  .card-meta{font-size:0.8rem;color:#6b9490!important;margin-top:3px;margin-bottom:8px;}
+  .card-type-badge{font-size:0.7rem;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
+  .badge-book{background:#ede9fe;color:#8b5cf6!important;}
+  .badge-movie{background:#fff3e8;color:#f97316!important;}
+  .card-note{font-size:0.86rem;color:#1c3532!important;line-height:1.5;margin-bottom:11px;padding:9px 12px;background:#f0fdfa!important;border-radius:10px;font-style:italic;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .card-who{font-size:0.78rem;color:#6b9490!important;}
+  .card-who strong{color:#0d9488!important;}
+  .card-actions{display:flex;gap:7px;align-items:center;}
+
+  .like-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;border:2px solid #fecdd3;background:#fff!important;font-family:'Nunito',sans-serif;font-size:0.83rem;font-weight:700;color:#f43f5e!important;cursor:pointer;transition:all 0.15s;}
+  .like-btn.liked{background:#f43f5e!important;border-color:#f43f5e;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+  .like-btn:active{transform:scale(0.94);}
+
+  .done-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;border:2px solid #a7f3d0;background:#fff!important;font-family:'Nunito',sans-serif;font-size:0.83rem;font-weight:700;color:#10b981!important;cursor:pointer;transition:all 0.15s;}
+  .done-btn.is-done{background:#10b981!important;border-color:#10b981;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+  .done-btn:active{transform:scale(0.94);}
+
+  .delete-btn{display:flex;align-items:center;padding:7px 10px;border-radius:999px;border:2px solid #fde8e8;background:#fff!important;font-size:0.83rem;color:#f43f5e!important;cursor:pointer;transition:all 0.15s;}
+  .delete-btn:active{transform:scale(0.94);}
+
+  .done-count{font-size:0.74rem;color:#10b981!important;font-weight:700;}
+  .empty{text-align:center;padding:44px 20px;color:#6b9490!important;}
+  .empty .emoji{font-size:2.8rem;display:block;margin-bottom:10px;}
+
+  /* FAB */
+  .fab{position:fixed;bottom:28px;right:20px;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff!important;border:none;font-size:2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 22px rgba(13,148,136,0.45);z-index:100;-webkit-text-fill-color:#fff!important;}
+  .fab:active{transform:scale(0.95);}
+
+  /* MODAL */
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(19,78,74,0.6);z-index:200;align-items:flex-end;justify-content:center;}
+  .modal-backdrop.open{display:flex;animation:fadeIn 0.2s;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff!important;border-radius:24px 24px 0 0;padding:26px 22px 44px;width:100%;max-width:560px;animation:slideUp 0.25s ease;max-height:92vh;overflow-y:auto;}
+  @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .modal h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:#134e4a!important;}
+  .modal-close{background:#f0fdfa!important;border:none;border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;color:#6b9490!important;display:flex;align-items:center;justify-content:center;}
+  .type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .type-btn{padding:13px;border-radius:13px;border:2px solid #99f6e4;background:#fff!important;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.15s;text-align:center;color:#6b9490!important;}
+  .type-btn.sel-book{background:#ede9fe!important;border-color:#8b5cf6;color:#8b5cf6!important;-webkit-text-fill-color:#8b5cf6!important;}
+  .type-btn.sel-movie{background:#fff3e8!important;border-color:#f97316;color:#f97316!important;-webkit-text-fill-color:#f97316!important;}
+
+  /* ERROR BANNER */
+  .error-banner{background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;padding:14px 16px;margin:16px;font-size:0.85rem;color:#991b1b!important;text-align:center;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);background:#134e4a;color:#fff!important;padding:12px 22px;border-radius:999px;font-size:0.88rem;font-weight:700;opacity:0;transition:opacity 0.3s,transform 0.3s;z-index:300;white-space:nowrap;pointer-events:none;-webkit-text-fill-color:#fff!important;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="b1 bubble"></div><div class="b2 bubble"></div>
+  <div class="b3 bubble"></div><div class="b4 bubble"></div><div class="b5 bubble"></div>
+  <div class="header-inner">
+    <h1>🧜‍♀️ Mermaid Picks</h1>
+    <p>Books &amp; movies from your swim group</p>
+  </div>
+</div>
+
+<!-- Loading -->
+
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <p>Loading picks…</p>
+</div>
+
+<!-- Login -->
+
+<div id="login-screen">
+  <div class="login-card">
+    <h2>Dive in! 🌊</h2>
+    <p>Enter your first name so the group knows who's recommending what.</p>
+    <label class="input-label" for="name-input">Your first name</label>
+    <input class="input-field" id="name-input" type="text" placeholder="e.g. Sarah" autocomplete="off" maxlength="30">
+    <button class="btn-primary" id="login-btn" onclick="login()">Let's go →</button>
+    <p class="login-note">No password needed — anyone with the link can join.</p>
+  </div>
+</div>
+
+<!-- App -->
+
+<div style="display:none" id="app-wrapper">
+  <div class="topbar">
+    <span class="topbar-name" id="topbar-name"></span>
+    <button class="logout-btn" onclick="logout()">Change name</button>
+  </div>
+  <div id="app">
+    <div class="greeting">
+      <span class="name" id="greeting-name">Hi there!</span>
+      <span class="sub">See what the group is reading &amp; watching 📚🎬</span>
+    </div>
+    <div id="top-section">
+      <div class="section-title">🏆 Top Picks <span class="line"></span></div>
+      <div class="top-picks-scroll" id="top-picks-scroll"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="setFilter('all',this)">All picks</button>
+      <button class="tab" onclick="setFilter('book',this)">📚 Books</button>
+      <button class="tab" onclick="setFilter('movie',this)">🎬 Movies</button>
+      <button class="tab" onclick="setFilter('done',this)">✅ Read/Watched</button>
+      <button class="tab" onclick="setFilter('mine',this)">My picks</button>
+    </div>
+    <div class="picks-list" id="picks-list"></div>
+  </div>
+</div>
+
+<button class="fab" id="fab" style="display:none" onclick="openModal()">＋</button>
+
+<!-- Add Modal -->
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add a recommendation</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="type-toggle">
+      <button class="type-btn" id="btn-book" onclick="selectType('book')">📚 Book</button>
+      <button class="type-btn" id="btn-movie" onclick="selectType('movie')">🎬 Movie</button>
+    </div>
+    <label class="input-label">Title *</label>
+    <input class="input-field" id="title-input" type="text" placeholder="Title of the book or movie">
+    <label class="input-label">Author / Director <span style="font-weight:400;color:#6b9490">(optional)</span></label>
+    <input class="input-field" id="author-input" type="text" placeholder="e.g. Tana French">
+    <label class="input-label">Why do you recommend it? <span style="font-weight:400;color:#6b9490">(optional)</span></label>
+    <textarea class="input-field" id="note-input" placeholder="A short note for the group…"></textarea>
+    <button class="btn-primary" id="submit-btn" onclick="submitPick()">Share with the group 🎉</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ── Check config ──────────────────────────────────────────────
+  if (FIREBASE_CONFIG.apiKey === 'REPLACE_WITH_YOUR_API_KEY') {
+    document.getElementById('loading-screen').innerHTML =
+      `<div class="error-banner">
+        ⚠️ Firebase not configured yet.<br><br>
+        Open <strong>index.html</strong> in a text editor and replace the <strong>FIREBASE_CONFIG</strong> values at the top with your own Firebase project details.<br><br>
+        See the setup guide for step-by-step instructions.
+      </div>`;
+    throw new Error('Firebase config not set');
+  }
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const db  = getFirestore(app);
+  const picksCol = collection(db, 'picks');
+
+  // ── State ─────────────────────────────────────────────────────
+  let currentUser   = null;
+  let currentFilter = 'all';
+  let selectedType  = null;
+  let allPicks      = [];
+
+  // ── Auth ──────────────────────────────────────────────────────
+  window.login = function() {
+    const name = document.getElementById('name-input').value.trim();
+    if (!name) { showToast('Please enter your name!'); return; }
+    currentUser = name;
+    try { localStorage.setItem('mermaidpicks_user', name); } catch(e){}
+    showApp();
+  };
+
+  window.logout = function() {
+    try { localStorage.removeItem('mermaidpicks_user'); } catch(e){}
+    currentUser = null;
+    document.getElementById('login-screen').style.display  = 'block';
+    document.getElementById('app-wrapper').style.display   = 'none';
+    document.getElementById('fab').style.display           = 'none';
+    document.getElementById('name-input').value            = '';
+  };
+
+  function showApp() {
+    document.getElementById('login-screen').style.display  = 'none';
+    document.getElementById('loading-screen').style.display= 'none';
+    document.getElementById('app-wrapper').style.display   = 'block';
+    document.getElementById('fab').style.display           = 'flex';
+    document.getElementById('greeting-name').textContent   = 'Hi, ' + currentUser + '! 👋';
+    document.getElementById('topbar-name').textContent     = '👋 ' + currentUser;
+    startListening();
+  }
+
+  // ── Real-time listener ────────────────────────────────────────
+  function startListening() {
+    const q = query(picksCol, orderBy('ts', 'desc'));
+    onSnapshot(q, snapshot => {
+      allPicks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderAll();
+    }, err => {
+      console.error(err);
+      showToast('Connection issue — check your internet');
+    });
+  }
+
+  // ── Render ────────────────────────────────────────────────────
+  function renderAll() { renderTopPicks(); renderPicks(); }
+
+  function renderTopPicks() {
+    const ranked = [...allPicks]
+      .filter(p => (p.likes||[]).length > 0)
+      .sort((a,b) => (b.likes||[]).length - (a.likes||[]).length)
+      .slice(0, 5);
+    const el      = document.getElementById('top-picks-scroll');
+    const section = document.getElementById('top-section');
+    if (!ranked.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    const medals = ['🥇','🥈','🥉','⭐','⭐'];
+    el.innerHTML = ranked.map((p,i) => `
+      <div class="top-card">
+        <span class="top-rank">${medals[i]}</span>
+        <div style="margin-top:6px">
+          <span class="top-type-dot dot-${p.type}"></span>
+          <span style="font-size:0.7rem;color:#6b9490;font-weight:700;text-transform:uppercase">${p.type}</span>
+        </div>
+        <div class="top-card-title">${esc(p.title)}</div>
+        ${p.author ? `<div class="top-card-meta">${esc(p.author)}</div>` : ''}
+        <div class="top-card-likes">❤️ ${p.likes.length} like${p.likes.length>1?'s':''}</div>
+      </div>`).join('');
+  }
+
+  function renderPicks() {
+    const list = document.getElementById('picks-list');
+    let picks = [...allPicks];
+    if (currentFilter==='book')  picks = picks.filter(p => p.type==='book');
+    if (currentFilter==='movie') picks = picks.filter(p => p.type==='movie');
+    if (currentFilter==='mine')  picks = picks.filter(p => p.who===currentUser);
+    if (currentFilter==='done')  picks = picks.filter(p => (p.done||[]).includes(currentUser));
+
+    if (!picks.length) {
+      const msgs = {
+        mine:  "You haven't added any picks yet!",
+        done:  "You haven't marked anything as read/watched yet.",
+        book:  "No book picks yet — add one!",
+        movie: "No movie picks yet — add one!",
+        all:   "No picks yet — be the first!"
+      };
+      list.innerHTML = `<div class="empty"><span class="emoji">${currentFilter==='done'?'✅':'🌊'}</span><p>${msgs[currentFilter]||msgs.all}</p></div>`;
+      return;
+    }
+
+    list.innerHTML = picks.map((p,i) => {
+      const liked     = (p.likes||[]).includes(currentUser);
+      const isDone    = (p.done||[]).includes(currentUser);
+      const likeCount = (p.likes||[]).length;
+      const doneCount = (p.done||[]).length;
+      const isOwn     = p.who === currentUser;
+      const doneWord  = p.type==='book' ? 'Read it' : 'Watched it';
+      return `
+        <div class="pick-card${isDone?' done-card':''}" style="animation-delay:${i*0.04}s">
+          <div class="card-top">
+            <div class="card-title-wrap">
+              <div class="card-title${isDone?' strikethrough':''}">${esc(p.title)}</div>
+              ${p.author ? `<div class="card-meta">${esc(p.author)}</div>` : '<div style="height:4px"></div>'}
+            </div>
+            <span class="card-type-badge badge-${p.type}">${p.type==='book'?'📚 Book':'🎬 Movie'}</span>
+          </div>
+          ${p.note ? `<div class="card-note">"${esc(p.note)}"</div>` : ''}
+          <div class="card-footer">
+            <div class="card-who">
+              by <strong>${esc(p.who)}</strong>
+              ${doneCount>0 ? ` · <span class="done-count">✅ ${doneCount}</span>` : ''}
+            </div>
+            <div class="card-actions">
+              <button class="done-btn${isDone?' is-done':''}" onclick="toggleDone('${p.id}','${p.type}')">
+                ${isDone ? '✅ Done' : '☑️ '+doneWord}
+              </button>
+              ${!isOwn
+                ? `<button class="like-btn${liked?' liked':''}" onclick="toggleLike('${p.id}')">
+                    ${liked?'❤️':'🤍'} ${likeCount>0?likeCount:'Like'}
+                   </button>`
+                : `<span style="font-size:0.78rem;color:#6b9490">${likeCount>0?'❤️ '+likeCount:''}</span>
+                   <button class="delete-btn" onclick="deletePick('${p.id}')" title="Delete">🗑️</button>`
+              }
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  // ── Actions ───────────────────────────────────────────────────
+  window.toggleLike = async function(id) {
+    const p = allPicks.find(x => x.id===id); if (!p) return;
+    const liked = (p.likes||[]).includes(currentUser);
+    await updateDoc(doc(db,'picks',id), {
+      likes: liked ? arrayRemove(currentUser) : arrayUnion(currentUser)
+    });
+  };
+
+  window.toggleDone = async function(id, type) {
+    const p = allPicks.find(x => x.id===id); if (!p) return;
+    const isDone = (p.done||[]).includes(currentUser);
+    await updateDoc(doc(db,'picks',id), {
+      done: isDone ? arrayRemove(currentUser) : arrayUnion(currentUser)
+    });
+    if (!isDone) showToast(type==='book' ? 'Marked as read! 📖' : 'Marked as watched! 🎬');
+  };
+
+  window.deletePick = async function(id) {
+    const p = allPicks.find(x => x.id===id);
+    if (!p || p.who !== currentUser) return;
+    if (!confirm('Delete "' + p.title + '"?')) return;
+    await deleteDoc(doc(db,'picks',id));
+    showToast('Pick deleted');
+  };
+
+  window.setFilter = function(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderPicks();
+  };
+
+  // ── Modal ─────────────────────────────────────────────────────
+  window.openModal = function() {
+    selectedType = null;
+    document.getElementById('btn-book').className  = 'type-btn';
+    document.getElementById('btn-movie').className = 'type-btn';
+    ['title-input','author-input','note-input'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('modal').classList.add('open');
+  };
+  window.closeModal = function() { document.getElementById('modal').classList.remove('open'); };
+  document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) window.closeModal(); });
+
+  window.selectType = function(t) {
+    selectedType = t;
+    document.getElementById('btn-book').className  = 'type-btn' + (t==='book'  ? ' sel-book'  : '');
+    document.getElementById('btn-movie').className = 'type-btn' + (t==='movie' ? ' sel-movie' : '');
+    document.getElementById('author-input').placeholder = t==='book' ? 'e.g. Colm Tóibín' : 'e.g. Greta Gerwig';
+  };
+
+  window.submitPick = async function() {
+    if (!selectedType) { showToast('Please choose Book or Movie 👆'); return; }
+    const title = document.getElementById('title-input').value.trim();
+    if (!title)  { showToast('Please enter a title!'); return; }
+    const author = document.getElementById('author-input').value.trim();
+    const note   = document.getElementById('note-input').value.trim();
+    const btn    = document.getElementById('submit-btn');
+    btn.disabled = true; btn.textContent = 'Sharing…';
+    try {
+      await addDoc(picksCol, { type:selectedType, title, author, note, who:currentUser, likes:[], done:[], ts:serverTimestamp() });
+      window.closeModal();
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tab').classList.add('active');
+      currentFilter = 'all';
+      showToast('Pick shared with the group! 🎉');
+    } catch(e) {
+      showToast('Error saving — check your connection');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Share with the group 🎉';
+    }
+  };
+
+  // ── Toast ─────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+  window.showToast = showToast;
+
+  // ── Init ──────────────────────────────────────────────────────
+  window.onload = function() {
+    try {
+      const saved = localStorage.getItem('mermaidpicks_user');
+      if (saved) { currentUser = saved; showApp(); return; }
+    } catch(e){}
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display   = 'block';
+  };
+</script>
+
+</body>
+</html>
